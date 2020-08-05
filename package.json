@@ -1,0 +1,25 @@
+{
+  "name": "resource-profiling",
+  "version": "1.0.0",
+  "description": "resource profiling",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "myScript": "node -e 'require(\"./app.js\").fetchImage()'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jedsilvan/resource-profiling.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jedsilvan/resource-profiling/issues"
+  },
+  "homepage": "https://github.com/jedsilvan/resource-profiling#readme",
+  "dependencies": {
+    "axios": "^0.19.2",
+    "buffer-image-size": "^0.6.4",
+    "chalk": "^4.1.0"
+  }
+}
