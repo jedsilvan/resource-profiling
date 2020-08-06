@@ -9,6 +9,7 @@ exports.fetchImage = function (url) {
             const imageInfo = sizeOf(response.data);
 
             return {
+                url,
                 size: parseFloat(contentLength),
                 ...imageInfo
             }
