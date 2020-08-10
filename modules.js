@@ -1,5 +1,6 @@
 const axios = require('axios');
 const sizeOf = require('buffer-image-size');
+const { bgWhite } = require("chalk");
 
 exports.fetchImage = function (url) {
     return axios.get(url, { responseType: 'arraybuffer' })
