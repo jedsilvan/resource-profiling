@@ -1,0 +1,119 @@
+[
+    {
+        "templateIds": ["102"],
+        "name": "HeroSingle",
+        "min": {
+            "width": "270",
+            "height": "240"
+        },
+        "max": {
+            "width": "720",
+            "height": "405"
+        },
+        "maxFileSize": "50"
+    },
+    {
+        "templateIds": ["101", "103", "104"],
+        "name": "HeroHalfSingle",
+        "min": {
+            "width": "100",
+            "height": "100"
+        },
+        "max": {
+            "width": "300",
+            "height": "300"
+        },
+        "maxFileSize": "20"
+    },
+    {
+        "templateIds": ["105"],
+        "name": "HeroFullbleed",
+        "min": {
+            "width": "240",
+            "height": "240"
+        },
+        "max": {
+            "width": "720",
+            "height": "720"
+        },
+        "maxFileSize": "50"
+    },
+    {
+        "templateIds": ["110", "203"],
+        "name": "MultipleList",
+        "min": {
+            "width": "40",
+            "height": "40"
+        },
+        "max": {
+            "width": "120",
+            "height": "120"
+        },
+        "maxFileSize": "10"
+    },
+    {
+        "templateIds": ["107"],
+        "name": "MultipleCarousel",
+        "min": {
+            "width": "140",
+            "height": "140"
+        },
+        "max": {
+            "width": "420",
+            "height": "420"
+        },
+        "maxFileSize": "25"
+    },
+    {
+        "templateIds": ["106"],
+        "name": "MultipleLargeCarousel",
+        "min": {
+            "width": "180",
+            "height": "120"
+        },
+        "max": {
+            "width": "540",
+            "height": "360"
+        },
+        "maxFileSize": "25"
+    },
+    {
+        "templateIds": ["102"],
+        "name": "MultiplePortraitCarousel",
+        "min": {
+            "width": "36",
+            "height": "64"
+        },
+        "max": {
+            "width": "144",
+            "height": "256"
+        },
+        "maxFileSize": "20"
+    },
+    {
+        "templateIds": ["109", "201", "202"],
+        "name": "MultipleThumbnail",
+        "min": {
+            "width": "52",
+            "height": "52"
+        },
+        "max": {
+            "width": "160",
+            "height": "160"
+        },
+        "maxFileSize": "15"
+    },
+    {
+        "templateIds": ["111"],
+        "name": "MultipleSportCarousel",
+        "min": {
+            "width": "31",
+            "height": "31"
+        },
+        "max": {
+            "width": "80",
+            "height": "80"
+        },
+        "maxFileSize": "8"
+    }
+]
