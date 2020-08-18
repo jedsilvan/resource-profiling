@@ -26,7 +26,8 @@ const imgResponseJSON = require('./imgResponse');
 
 
 (async function () {
-    const imgResponse = imgResponseJSON.imgResponse;
+    // const imgResponse = imgResponseJSON.imgResponse;
+    const imgResponse = [];
     const BODY_1 = "body1";
     const BODY_2 = "body2";
     let bodyAreaCollection = [];
@@ -90,8 +91,10 @@ const imgResponseJSON = require('./imgResponse');
         await uniqueIds.forEach(value => {
             const bodyArea = body1.filter(i => i.cardId === value);
             const expandedArea = body2.filter(i => i.cardId === value);
+            const { cardTitle } = body1.find(i => i.cardId === value);
             groupedData.push({
                 cardId: value,
+                cardTitle,
                 templateIdBody1: bodyArea.length ? bodyArea[0].templateId : null,
                 templateIdBody2: expandedArea.length ? expandedArea[0].templateId : null,
                 body1: bodyArea,
@@ -110,10 +113,11 @@ const imgResponseJSON = require('./imgResponse');
         data.forEach(i => cardMultiBarArray.push(multibar.create((i.body1.length + i.body2.length), 0, { cardId: i.cardId })));
 
         data.forEach((item, index) => {
-            const { cardId, templateIdBody1, templateIdBody2, body1, body2 } = item;
+            const { cardId, cardTitle, templateIdBody1, templateIdBody2, body1, body2 } = item;
 
             let cardObj = new Object();
             cardObj.cardId = cardId;
+            cardObj.cardTitle = cardTitle;
             cardObj.totalResourceCount = (body1.length + body2.length);
             cardObj.profilingStatus = true;
 
@@ -143,27 +147,11 @@ const imgResponseJSON = require('./imgResponse');
                 body1.forEach(item => {
                     const { templateId, templateName, validation } = validateResource(item, rule);
 
-                    cardObj.bodyArea.templateId = templateId;
-                    cardObj.bodyArea.templateName = templateName;
+                    cardObj.bodyArea.template = {
+                        id: templateId,
+                        name: templateName
+                    };
                     cardObj.bodyArea.resources.push(validation);
-                    // cardO
-                    // result[index].bodyAreaResources.push(validation);
-                    // result[index].bodyAreaTemplate = templateName;
-
-
-
-                    // if (!templateId) {
-                    //     result[index] = {
-                    //         ...result[index],
-                    //         error: `Template ID not defined in PartnerCard${cardId.substr(5)}.js`
-                    //     };
-                    //     delete result[index].bodyAreaTemplate;
-                    //     delete result[index].bodyAreaResources;
-                    // } else {
-                    //     const { templateName, validation } = validateResource(item);
-                    //     result[index].bodyAreaResources.push(validation);
-                    //     result[index].bodyAreaTemplate = templateName;
-                    // }
                     cardMultiBarArray[index].increment();
                 });
 
@@ -236,53 +224,95 @@ const imgResponseJSON = require('./imgResponse');
         return ((_width >= _minWidth && _width <= _maxWidth) && (_height >= _minHeight && _height <= _maxHeight));
     }
 
+    const delay = d => new Promise(r => setTimeout(r, d))
+
+    async function waitForElementToBeHidden(page, selector) {
+        await delay(1000);
+
+        // const placeholderImgCount = await page.$$eval(selector, divs => divs.length);
+        const element = await page.$(selector);
+        console.log('.');
+
+        if (!element) {
+            return true;
+        }
+
+        return waitForElementToBeHidden(page, selector)
+    }
+
 
     try {
-        // log(chalk.cyanBright('Launching Headless Chrome browser...'));
-        // const browser = await puppeteer.launch();
-        // const [page] = await browser.pages();
-        // page.setDefaultTimeout(0);
-        // page.on('domcontentloaded', onDOMContentLoaded);
-        // page.on('request', onRequest);
-        // page.on('response', onResponse);
+        log(chalk.cyanBright('Launching Headless Chrome browser...'));
+        const browser = await puppeteer.launch();
+        const [page] = await browser.pages();
+        page.setDefaultTimeout(0);
+        page.on('domcontentloaded', onDOMContentLoaded);
+        page.on('request', onRequest);
+        page.on('response', onResponse);
+        await page.setCacheEnabled(false);
+        await page.setViewport({
+            width: 1208,
+            height: 800
+        });
 
-        // log(chalk.cyanBright('Accessing ') + chalk.green(URL));
-        // await page.goto(URL, { waitUntil: 'networkidle0' });
-        // await page.waitFor(() => !document.querySelector('.preload-container'));
+        log(chalk.cyanBright('Accessing ') + chalk.green(URL));
+        await page.goto(URL, { waitUntil: 'networkidle0' });
+        log(`\n${noOfFailedRequests}/${progressTotal - 1} failed requests`);
 
-        // log(`\n${noOfFailedRequests}/${progressTotal - 1} failed requests`);
+        log(chalk.cyanBright('Waiting for cards to be loaded..'));
+        // await page.waitFor(() => !document.querySelectorAll('.preload-container'));
+        await waitForElementToBeHidden(page, '.preload-container');
 
-        // // remove div#intro-card from the DOM
-        // await page.evaluate(() => {
-        //     const el = document.querySelector('#intro-card');
-        //     el.parentNode.removeChild(el);
-        // });
+        log(chalk.cyanBright('Waiting for all images to be rendered..'));
+        // await page.waitFor(() => (await page.$$('#lazyImgContainerbodyImage')).length === 0 ? true : false);
+        // await page.waitFor((page) => page.$$('#lazyImgContainerbodyImage').length === 0 ? true : false);
+        // await page.waitForSelector('#lazyImgContainerbodyImage', { hidden: true });
 
-        // bodyAreaCollection = await page.evaluate(() => Array.from(document.querySelectorAll('.bodyArea [data-src]'), element => {
-        //     return {
-        //         cardId: element.getAttribute('data-cardId'),
-        //         fileSize: 0,
-        //         height: element.getAttribute("data-height"),
-        //         src: element.getAttribute('data-src'),
-        //         templateId: element.getAttribute("data-body1"),
-        //         width: element.getAttribute("data-width")
-        //     }
-        // }));
+        await waitForElementToBeHidden(page, '#lazyImgContainerbodyImage');
+        
 
-        // expandedAreaCollection = await page.evaluate(() => Array.from(document.querySelectorAll('.expandedArea [data-src]'), element => {
-        //     return {
-        //         cardId: element.getAttribute('data-cardId'),
-        //         fileSize: 0,
-        //         height: element.getAttribute("data-height"),
-        //         src: element.getAttribute('data-src'),
-        //         templateId: element.getAttribute("data-body2"),
-        //         width: element.getAttribute("data-width")
-        //     }
-        // }));
+        log(chalk.cyanBright('Page completely loaded'));
 
-        bodyAreaCollection = bodyAreaCollectionJSON.bodyArea;
-        expandedAreaCollection = expandedAreaCollectionJSON.expandedArea;
 
+        // remove div#intro-card from the DOM
+        await page.evaluate(() => {
+            const el = document.querySelector('#intro-card');
+            el.parentNode.removeChild(el);
+        });
+
+        bodyAreaCollection = await page.evaluate(() => Array.from(document.querySelectorAll('.bodyArea [data-src]'), element => {
+            return {
+                cardId: element.getAttribute('data-cardId'),
+                cardTitle: "",
+                fileSize: 0,
+                height: element.getAttribute("data-height"),
+                src: element.getAttribute('data-src'),
+                templateId: element.getAttribute("data-body1"),
+                width: element.getAttribute("data-width")
+            }
+        }));
+
+        console.log(await page.content())
+
+        expandedAreaCollection = await page.evaluate(() => Array.from(document.querySelectorAll('.expandedArea [data-src]'), element => {
+            return {
+                cardId: element.getAttribute('data-cardId'),
+                fileSize: 0,
+                height: element.getAttribute("data-height"),
+                src: element.getAttribute('data-src'),
+                templateId: element.getAttribute("data-body2"),
+                width: element.getAttribute("data-width")
+            }
+        }));
+
+        // get card title
+        for (var i = 0; i < bodyAreaCollection.length; i++) {
+            let titleText = await page.evaluate(element => element.textContent, await page.$(`div#${bodyAreaCollection[i].cardId} #titleBar span`));
+            bodyAreaCollection[i].cardTitle = titleText;
+        }
+
+        // bodyAreaCollection = bodyAreaCollectionJSON.bodyArea;
+        // expandedAreaCollection = expandedAreaCollectionJSON.expandedArea;
         await getImageFileSize(BODY_1, bodyAreaCollection);
         await getImageFileSize(BODY_2, expandedAreaCollection);
         const groupedData = await combineBodyAreaAndExpandedAea({ body1: bodyAreaCollection, body2: expandedAreaCollection });
@@ -302,12 +332,10 @@ const imgResponseJSON = require('./imgResponse');
             console.log("JSON file has been saved.");
         });
 
-
-
-        // await browser.close();
     } catch (err) {
         console.error(err);
     } finally {
+        await browser.close();
         process.exit();
     }
 })();
